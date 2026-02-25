@@ -1,0 +1,70 @@
+.lr-lease-detail {
+  padding: 0;
+}
+
+.lr-lease-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #24211d;
+  margin: 0 0 4px 0;
+}
+
+.lr-lease-detail-subtitle {
+  font-size: 13px;
+  color: #6f6a63;
+  margin: 0 0 20px 0;
+}
+
+.lr-lease-detail-section {
+  margin-bottom: 24px;
+}
+
+.lr-lease-detail-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6f6a63;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e8e4df;
+}
+
+.lr-lease-detail-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 6px 20px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.lr-lease-detail-grid dt {
+  color: #6f6a63;
+  font-weight: 500;
+  margin: 0;
+}
+
+.lr-lease-detail-grid dd {
+  margin: 0;
+  color: #24211d;
+}
+
+.lr-lease-detail-asset-select {
+  font-size: 13px;
+  padding: 4px 8px;
+  border: 1px solid #d0ccc6;
+  border-radius: 3px;
+  background: #fff;
+  color: #24211d;
+  min-width: 160px;
+}
+
+.lr-lease-detail-asset-select:focus {
+  outline: none;
+  border-color: #0064d2;
+}
+
+.lr-lease-detail-notes {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
