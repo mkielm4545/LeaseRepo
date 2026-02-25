@@ -30,33 +30,7 @@ function Sidebar({
     return formatDate(value) ?? '';
   }
 
-  const sortedLeases = useMemo(() => {
-    const sortConfig = { field: null, direction: 'asc' };
-    if (!sortConfig.field || leases.length === 0) return leases;
-
-    const field = sortConfig.field;
-    const dir = sortConfig.direction === 'desc' ? -1 : 1;
-
-    const copy = [...leases];
-    copy.sort((a, b) => {
-      const av = a[field];
-      const bv = b[field];
-
-      if (field === 'gla') {
-        const parseGla = (v) =>
-          typeof v === 'string'
-            ? parseFloat(v.replace(/\s/g, '').replace(',', '.')) || 0
-            : Number(v) || 0;
-        return (parseGla(av) - parseGla(bv)) * dir;
-      }
-
-      const astr = av == null ? '' : String(av);
-      const bstr = bv == null ? '' : String(bv);
-      return astr.localeCompare(bstr, undefined, { sensitivity: 'base' }) * dir;
-    });
-
-    return copy;
-  }, [leases]);
+  const sortedLeases = useMemo(() => leases, [leases]);
 
   return (
     <aside className="lr-sidebar">
