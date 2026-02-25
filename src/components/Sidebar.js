@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import './Sidebar.css';
-import { formatDate, formatCurrency, formatRentPerSqm } from '../utils/format';
+import { formatDate, formatRentPerSqm } from '../utils/format';
 
 function Sidebar({
   leases = [],
@@ -12,11 +12,6 @@ function Sidebar({
   onNavChange,
   onUploadClick,
 }) {
-  const [sortConfig, setSortConfig] = useState({
-    field: null,
-    direction: 'asc',
-  });
-
   const handleSelect = (lease) => {
     if (!onSelectLease) return;
     onSelectLease(lease);
@@ -35,15 +30,8 @@ function Sidebar({
     return formatDate(value) ?? '';
   }
 
-  const updateSort = (field, direction) => {
-    if (!field || direction === 'none') {
-      setSortConfig({ field: null, direction: 'asc' });
-      return;
-    }
-    setSortConfig({ field, direction });
-  };
-
   const sortedLeases = useMemo(() => {
+    const sortConfig = { field: null, direction: 'asc' };
     if (!sortConfig.field || leases.length === 0) return leases;
 
     const field = sortConfig.field;
@@ -68,7 +56,7 @@ function Sidebar({
     });
 
     return copy;
-  }, [leases, sortConfig]);
+  }, [leases]);
 
   return (
     <aside className="lr-sidebar">
