@@ -40,6 +40,12 @@ export function formatRentPerSqm(value) {
   return '€' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/m²';
 }
 
+/** Format rent per sqm per month as €X.XX/m²/mo */
+export function formatRentPerSqmMo(value) {
+  const s = formatRentPerSqm(value);
+  return s ? s + '/mo' : null;
+}
+
 /** Format break_option: "None", "Rolling", or date as DD MMM YYYY. */
 export function formatBreakOption(value) {
   if (value == null || value === '') return 'None';

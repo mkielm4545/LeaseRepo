@@ -68,3 +68,61 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+.lr-lease-detail-passing-rent { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; }
+.lr-lease-detail-passing-rent-value { font-weight: 500; }
+.lr-lease-detail-passing-rent-total { color: #6f6a63; font-weight: normal; }
+.lr-lease-detail-passing-rent-updated { font-size: 12px; color: #6f6a63; }
+.lr-lease-detail-passing-rent-invoice { font-size: 14px; }
+
+.lr-lease-detail-history { margin-top: 14px; }
+.lr-lease-detail-history-toggle {
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #0064d2;
+  cursor: pointer;
+}
+.lr-lease-detail-history-toggle:hover { text-decoration: underline; }
+.lr-lease-detail-history-content { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e8e4df; }
+.lr-lease-detail-history-loading { font-size: 13px; color: #6f6a63; margin: 0 0 10px 0; }
+.lr-lease-detail-chart { margin-bottom: 16px; min-height: 220px; }
+.lr-lease-detail-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.lr-lease-detail-history-table th,
+.lr-lease-detail-history-table td { padding: 6px 10px; text-align: left; border-bottom: 1px solid #e8e4df; }
+.lr-lease-detail-history-table th { color: #6f6a63; font-weight: 600; }
+.lr-lease-detail-history-table td:nth-child(2),
+.lr-lease-detail-history-table td:nth-child(3) { text-align: right; }
+.lr-lease-detail-history-empty { color: #858078; }
+.lr-lease-detail-history-table a { color: #0064d2; }
+.lr-lease-detail-history-error { color: #c0392b; font-size: 13px; margin: 8px 0 0 0; }
+.lr-lease-detail-log-entry-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #0064d2;
+  background: #fff;
+  border: 1px solid #0064d2;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.lr-lease-detail-log-entry-btn:hover { background: #e5f1fb; }
+
+.lr-lease-detail-passing-rent-form { max-width: 360px; margin-bottom: 12px; padding: 12px; border: 1px solid #d0ccc6; border-radius: 4px; background: #f8f6f2; }
+.lr-lease-detail-form-row { margin-bottom: 10px; }
+.lr-lease-detail-form-row label { display: block; font-size: 12px; font-weight: 500; color: #3b3832; margin-bottom: 4px; }
+.lr-lease-detail-form-row input[type="date"],
+.lr-lease-detail-form-row input[type="number"],
+.lr-lease-detail-form-row input[type="text"],
+.lr-lease-detail-form-row input[type="file"] { width: 100%; max-width: 240px; padding: 6px 8px; font-size: 13px; border: 1px solid #d0ccc6; border-radius: 3px; }
+.lr-lease-detail-form-total { font-weight: 600; color: #24211d; margin-left: 8px; }
+.lr-lease-detail-form-actions { margin-top: 12px; display: flex; gap: 8px; }
+.lr-lease-detail-form-actions button { padding: 6px 14px; font-size: 13px; border-radius: 3px; cursor: pointer; }
+.lr-lease-detail-form-actions button[type="submit"] { background: #0064d2; color: #fff; border: 0; }
+.lr-lease-detail-form-actions button[type="button"] { background: #fff; border: 1px solid #d0ccc6; color: #3b3832; }

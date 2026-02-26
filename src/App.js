@@ -115,6 +115,11 @@ function App() {
     setSelectedLease((prev) => (prev && prev.id === leaseId ? { ...prev, asset: newAsset } : prev));
   }, []);
 
+  const handleLeaseUpdate = useCallback((updatedLease) => {
+    setSelectedLease(updatedLease);
+    setLeases((prev) => prev.map((l) => (l.id === updatedLease.id ? updatedLease : l)));
+  }, []);
+
   function renderMainContent() {
     if (showUploadPanel) {
       return (
@@ -128,7 +133,7 @@ function App() {
       return <ReviewQueue />;
     }
     if (activeView === 'leases' && selectedLease) {
-      return <LeaseDetail lease={selectedLease} onAssetChange={handleAssetChange} />;
+      return <LeaseDetail lease={selectedLease} onAssetChange={handleAssetChange} onLeaseUpdate={handleLeaseUpdate} />;
     }
     if (activeView === 'leases') {
       return (
