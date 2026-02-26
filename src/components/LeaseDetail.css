@@ -2,6 +2,109 @@
   padding: 0;
 }
 
+.lr-lease-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lr-lease-detail-header .lr-lease-detail-title {
+  margin: 0 0 4px 0;
+}
+
+.lr-lease-detail-header .lr-lease-detail-subtitle {
+  margin: 0;
+}
+
+.lr-lease-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.lr-lease-detail-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.lr-lease-detail-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lr-lease-detail-btn-edit {
+  background: #0064d2;
+  color: #fff;
+  border-color: #0064d2;
+}
+
+.lr-lease-detail-btn-edit:hover:not(:disabled) {
+  background: #0052b3;
+}
+
+.lr-lease-detail-btn-save {
+  background: #34c759;
+  color: #fff;
+  border-color: #34c759;
+}
+
+.lr-lease-detail-btn-save:hover:not(:disabled) {
+  background: #2da84e;
+}
+
+.lr-lease-detail-btn-cancel {
+  background: #fff;
+  color: #3b3832;
+  border-color: #d0ccc6;
+}
+
+.lr-lease-detail-btn-cancel:hover:not(:disabled) {
+  background: #f8f6f2;
+}
+
+.lr-lease-detail-btn-delete {
+  background: #fff;
+  color: #c0392b;
+  border-color: #c0392b;
+}
+
+.lr-lease-detail-btn-delete:hover:not(:disabled) {
+  background: #fdeaea;
+}
+
+.lr-lease-detail-edit-error {
+  font-size: 13px;
+  color: #c0392b;
+  margin: -8px 0 12px 0;
+}
+
+.lr-lease-detail-input {
+  width: 100%;
+  max-width: 280px;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid #d0ccc6;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.lr-lease-detail-input:focus {
+  outline: none;
+  border-color: #0064d2;
+}
+
+.lr-lease-detail-textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
 .lr-lease-detail-title {
   font-size: 18px;
   font-weight: 600;

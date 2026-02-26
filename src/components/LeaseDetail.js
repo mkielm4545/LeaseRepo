@@ -15,13 +15,15 @@ import { supabase } from '../supabase';
 const ASSET_OPTIONS = ['CC La Vega', 'CC Madrid Sur', 'CC La Loma', 'CC Vinaroz', 'Other'];
 const RENT_INVOICES_BUCKET = 'rent-invoices';
 
-function LeaseDetail({ lease, onAssetChange, onLeaseUpdate }) {
+function LeaseDetail({ lease, onAssetChange, onLeaseUpdate, onLeaseDelete }) {
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [showNewEntryForm, setShowNewEntryForm] = useState(false);
   const [rentHistory, setRentHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState(null);
 
   const fetchRentHistory = useCallback(async () => {
     if (!lease?.id) return;
@@ -77,41 +79,239 @@ function LeaseDetail({ lease, onAssetChange, onLeaseUpdate }) {
     rentPerSqm: h.rent_per_sqm != null ? Number(h.rent_per_sqm) : null,
   })).filter((d) => d.rentPerSqm != null);
 
+  function toDateInputValue(d) {
+    if (d == null || d === '') return '';
+    const s = String(d).trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    const parsed = new Date(s);
+    return !isNaN(parsed.getTime()) ? parsed.getISOString().slice(0, 10) : '';
+  }
+
+  const handleEditClick = () => {
+    setSaveError(null);
+    setEditForm({
+      tenant: lease.tenant || '',
+      tradeName: lease.tradeName || '',
+      asset: lease.asset || '',
+      unit: lease.unit || '',
+      gla: lease.gla ?? '',
+      rent: lease.rent ?? '',
+      totalMonthly: lease.totalMonthly != null ? String(lease.totalMonthly) : '',
+      startDate: toDateInputValue(lease.startDate),
+      endDate: toDateInputValue(lease.endDate),
+      status: lease.status || '',
+      rentReview: lease.rentReview || '',
+      breakOption: lease.breakOption || '',
+      breakOptionDate: toDateInputValue(lease.breakOptionDate),
+      deposit: lease.deposit || '',
+      guarantee: lease.guarantee || '',
+      variableRent: lease.variableRent || '',
+      autoRenewal: lease.autoRenewal || '',
+      permittedUse: lease.permittedUse || '',
+      nonCompete: lease.nonCompete || '',
+      docType: lease.docType || '',
+      notes: lease.notes || '',
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditForm(null);
+    setSaveError(null);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editForm) return;
+    setSaving(true);
+    const toNum = (v) => (v === '' || v === undefined || v === null || isNaN(Number(v)) ? null : Number(v));
+    const payload = {
+      tenant: editForm.tenant || null,
+      trade_name: editForm.tenant || null,
+      asset: editForm.asset || null,
+      unit: editForm.unit || null,
+      gla: toNum(editForm.gla),
+      rent_per_sqm: toNum(editForm.rent),
+      total_monthly: toNum(editForm.totalMonthly),
+      start_date: editForm.startDate || null,
+      end_date: editForm.endDate || null,
+      status: editForm.status || null,
+      rent_review: editForm.rentReview || null,
+      break_option: editForm.breakOption || null,
+      break_option_date: editForm.breakOptionDate || null,
+      deposit: editForm.deposit || null,
+      guarantee: editForm.guarantee || null,
+      variable_rent: editForm.variableRent || null,
+      auto_renewal: editForm.autoRenewal || null,
+      permitted_use: editForm.permittedUse || null,
+      non_compete: editForm.nonCompete || null,
+      doc_type: editForm.docType || null,
+      notes: editForm.notes || null,
+    };
+    const { error } = await supabase.from('leases').update(payload).eq('id', lease.id);
+    setSaving(false);
+    if (error) {
+      setSaveError(error.message);
+      return;
+    }
+    const toNumF = (v) => (v === '' || v === undefined || v === null || isNaN(Number(v)) ? null : Number(v));
+    const updatedLease = {
+      ...lease,
+      tenant: editForm.tenant,
+      tradeName: editForm.tradeName,
+      asset: editForm.asset,
+      unit: editForm.unit,
+      gla: editForm.gla,
+      rent: editForm.rent,
+      totalMonthly: toNumF(editForm.totalMonthly),
+      startDate: editForm.startDate || null,
+      endDate: editForm.endDate || null,
+      status: editForm.status,
+      rentReview: editForm.rentReview,
+      breakOption: editForm.breakOption,
+      breakOptionDate: editForm.breakOptionDate || null,
+      deposit: editForm.deposit,
+      guarantee: editForm.guarantee,
+      variableRent: editForm.variableRent,
+      autoRenewal: editForm.autoRenewal,
+      permittedUse: editForm.permittedUse,
+      nonCompete: editForm.nonCompete,
+      docType: editForm.docType,
+      notes: editForm.notes,
+    };
+    if (onLeaseUpdate) onLeaseUpdate(updatedLease);
+    setIsEditing(false);
+    setEditForm(null);
+    setSaveError(null);
+  };
+
+  const handleDeleteLease = () => {
+    if (!window.confirm('Are you sure you want to delete this lease? This cannot be undone.')) return;
+    supabase.from('leases').delete().eq('id', lease.id).then(({ error }) => {
+      if (error) setSaveError(error.message);
+      else if (onLeaseDelete) onLeaseDelete(lease.id);
+    });
+  };
+
+  const setEdit = (key, value) => {
+    setEditForm((prev) => (prev ? { ...prev, [key]: value } : null));
+  };
+
   return (
     <div className="lr-lease-detail">
-      <h2 className="lr-lease-detail-title">{lease.tenant}</h2>
-      <p className="lr-lease-detail-subtitle">
-        {lease.asset} · {lease.unit}
-      </p>
+      <div className="lr-lease-detail-header">
+        <div>
+          <h2 className="lr-lease-detail-title">{isEditing && editForm ? editForm.tenant : lease.tenant}</h2>
+          <p className="lr-lease-detail-subtitle">
+            {isEditing && editForm ? editForm.asset : lease.asset} · {isEditing && editForm ? editForm.unit : lease.unit}
+          </p>
+        </div>
+        <div className="lr-lease-detail-actions">
+          {!isEditing ? (
+            <button type="button" className="lr-lease-detail-btn lr-lease-detail-btn-edit" onClick={handleEditClick}>
+              Edit
+            </button>
+          ) : (
+            <>
+              <button type="button" className="lr-lease-detail-btn lr-lease-detail-btn-save" onClick={handleSaveEdit} disabled={saving}>
+                {saving ? 'Saving…' : 'Save Changes'}
+              </button>
+              <button type="button" className="lr-lease-detail-btn lr-lease-detail-btn-cancel" onClick={handleCancelEdit} disabled={saving}>
+                Cancel
+              </button>
+              <button type="button" className="lr-lease-detail-btn lr-lease-detail-btn-delete" onClick={handleDeleteLease} disabled={saving}>
+                Delete Lease
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+      {isEditing && saveError && (
+        <p className="lr-lease-detail-edit-error" role="alert">{saveError}</p>
+      )}
 
       <section className="lr-lease-detail-section">
         <h3 className="lr-lease-detail-section-title">Overview</h3>
         <dl className="lr-lease-detail-grid">
           <dt>Tenant</dt>
-          <dd>{lease.tenant || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.tenant} onChange={(e) => setEdit('tenant', e.target.value)} />
+            ) : (
+              lease.tenant || '—'
+            )}
+          </dd>
           <dt>Asset</dt>
           <dd>
-            <select
-              className="lr-lease-detail-asset-select"
-              value={assetValue}
-              onChange={handleAssetSelect}
-              aria-label="Asset"
-            >
-              {assetOptions.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
+            {isEditing && editForm ? (
+              <select
+                className="lr-lease-detail-asset-select"
+                value={editForm.asset || 'Other'}
+                onChange={(e) => setEdit('asset', e.target.value)}
+              >
+                {(() => {
+                  const opts = [...ASSET_OPTIONS];
+                  if (editForm.asset && !opts.includes(editForm.asset)) opts.unshift(editForm.asset);
+                  return opts.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ));
+                })()}
+              </select>
+            ) : (
+              <>
+                <select
+                  className="lr-lease-detail-asset-select"
+                  value={assetValue}
+                  onChange={handleAssetSelect}
+                  aria-label="Asset"
+                >
+                  {assetOptions.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </>
+            )}
           </dd>
           <dt>Unit</dt>
-          <dd>{lease.unit || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.unit} onChange={(e) => setEdit('unit', e.target.value)} />
+            ) : (
+              lease.unit || '—'
+            )}
+          </dd>
           <dt>GLA m²</dt>
-          <dd>{lease.gla ?? '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="number" step="0.01" min="0" className="lr-lease-detail-input" value={editForm.gla} onChange={(e) => setEdit('gla', e.target.value)} />
+            ) : (
+              lease.gla ?? '—'
+            )}
+          </dd>
           <dt>Start date</dt>
-          <dd>{displayDate(lease.startDate)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="date" className="lr-lease-detail-input" value={editForm.startDate} onChange={(e) => setEdit('startDate', e.target.value)} />
+            ) : (
+              displayDate(lease.startDate)
+            )}
+          </dd>
           <dt>End date</dt>
-          <dd>{displayDate(lease.endDate)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="date" className="lr-lease-detail-input" value={editForm.endDate} onChange={(e) => setEdit('endDate', e.target.value)} />
+            ) : (
+              displayDate(lease.endDate)
+            )}
+          </dd>
           <dt>Status</dt>
-          <dd>{lease.status || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.status} onChange={(e) => setEdit('status', e.target.value)} />
+            ) : (
+              lease.status || '—'
+            )}
+          </dd>
         </dl>
       </section>
 
@@ -119,9 +319,21 @@ function LeaseDetail({ lease, onAssetChange, onLeaseUpdate }) {
         <h3 className="lr-lease-detail-section-title">Financial terms</h3>
         <dl className="lr-lease-detail-grid">
           <dt>€/m²/mo</dt>
-          <dd>{displayRentSqm(effectiveRentPerSqm)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="number" step="0.01" min="0" className="lr-lease-detail-input" value={editForm.rent} onChange={(e) => setEdit('rent', e.target.value)} />
+            ) : (
+              displayRentSqm(effectiveRentPerSqm)
+            )}
+          </dd>
           <dt>Monthly rent</dt>
-          <dd>{displayCurrency(lease.totalMonthly)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="number" step="0.01" min="0" className="lr-lease-detail-input" value={editForm.totalMonthly} onChange={(e) => setEdit('totalMonthly', e.target.value)} />
+            ) : (
+              displayCurrency(lease.totalMonthly)
+            )}
+          </dd>
           <dt>Passing rent</dt>
           <dd className="lr-lease-detail-passing-rent">
             <span className="lr-lease-detail-passing-rent-value">
@@ -144,17 +356,53 @@ function LeaseDetail({ lease, onAssetChange, onLeaseUpdate }) {
             )}
           </dd>
           <dt>Rent review</dt>
-          <dd>{lease.rentReview || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.rentReview} onChange={(e) => setEdit('rentReview', e.target.value)} />
+            ) : (
+              lease.rentReview || '—'
+            )}
+          </dd>
           <dt>Break option</dt>
-          <dd>{formatBreakOption(lease.breakOption)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.breakOption} onChange={(e) => setEdit('breakOption', e.target.value)} />
+            ) : (
+              formatBreakOption(lease.breakOption)
+            )}
+          </dd>
           <dt>Break option date</dt>
-          <dd>{displayDate(lease.breakOptionDate)}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="date" className="lr-lease-detail-input" value={editForm.breakOptionDate} onChange={(e) => setEdit('breakOptionDate', e.target.value)} />
+            ) : (
+              displayDate(lease.breakOptionDate)
+            )}
+          </dd>
           <dt>Deposit</dt>
-          <dd>{formatCurrencyInText(lease.deposit) || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.deposit} onChange={(e) => setEdit('deposit', e.target.value)} />
+            ) : (
+              formatCurrencyInText(lease.deposit) || '—'
+            )}
+          </dd>
           <dt>Guarantee</dt>
-          <dd>{formatCurrencyInText(lease.guarantee) || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.guarantee} onChange={(e) => setEdit('guarantee', e.target.value)} />
+            ) : (
+              formatCurrencyInText(lease.guarantee) || '—'
+            )}
+          </dd>
           <dt>Variable rent</dt>
-          <dd>{lease.variableRent || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.variableRent} onChange={(e) => setEdit('variableRent', e.target.value)} />
+            ) : (
+              lease.variableRent || '—'
+            )}
+          </dd>
         </dl>
 
         <div className="lr-lease-detail-history">
@@ -272,15 +520,45 @@ function LeaseDetail({ lease, onAssetChange, onLeaseUpdate }) {
         <h3 className="lr-lease-detail-section-title">Lease conditions</h3>
         <dl className="lr-lease-detail-grid">
           <dt>Auto-renewal</dt>
-          <dd>{lease.autoRenewal || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.autoRenewal} onChange={(e) => setEdit('autoRenewal', e.target.value)} />
+            ) : (
+              lease.autoRenewal || '—'
+            )}
+          </dd>
           <dt>Permitted use</dt>
-          <dd>{toTitleCaseIfAllCaps(lease.permittedUse) || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.permittedUse} onChange={(e) => setEdit('permittedUse', e.target.value)} />
+            ) : (
+              toTitleCaseIfAllCaps(lease.permittedUse) || '—'
+            )}
+          </dd>
           <dt>Non-compete radius</dt>
-          <dd>{lease.nonCompete || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.nonCompete} onChange={(e) => setEdit('nonCompete', e.target.value)} />
+            ) : (
+              lease.nonCompete || '—'
+            )}
+          </dd>
           <dt>Document type</dt>
-          <dd>{lease.docType || '—'}</dd>
+          <dd>
+            {isEditing && editForm ? (
+              <input type="text" className="lr-lease-detail-input" value={editForm.docType} onChange={(e) => setEdit('docType', e.target.value)} />
+            ) : (
+              lease.docType || '—'
+            )}
+          </dd>
           <dt>Notes</dt>
-          <dd className="lr-lease-detail-notes">{lease.notes || '—'}</dd>
+          <dd className={!isEditing || !editForm ? 'lr-lease-detail-notes' : ''}>
+            {isEditing && editForm ? (
+              <textarea className="lr-lease-detail-input lr-lease-detail-textarea" value={editForm.notes} onChange={(e) => setEdit('notes', e.target.value)} rows={3} />
+            ) : (
+              lease.notes || '—'
+            )}
+          </dd>
         </dl>
       </section>
     </div>

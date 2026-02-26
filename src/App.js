@@ -120,6 +120,11 @@ function App() {
     setLeases((prev) => prev.map((l) => (l.id === updatedLease.id ? updatedLease : l)));
   }, []);
 
+  const handleLeaseDelete = useCallback((deletedLeaseId) => {
+    setLeases((prev) => prev.filter((l) => l.id !== deletedLeaseId));
+    setSelectedLease((prev) => (prev?.id === deletedLeaseId ? null : prev));
+  }, []);
+
   function renderMainContent() {
     if (showUploadPanel) {
       return (
@@ -133,7 +138,7 @@ function App() {
       return <ReviewQueue />;
     }
     if (activeView === 'leases' && selectedLease) {
-      return <LeaseDetail lease={selectedLease} onAssetChange={handleAssetChange} onLeaseUpdate={handleLeaseUpdate} />;
+      return <LeaseDetail lease={selectedLease} onAssetChange={handleAssetChange} onLeaseUpdate={handleLeaseUpdate} onLeaseDelete={handleLeaseDelete} />;
     }
     if (activeView === 'leases') {
       return (
