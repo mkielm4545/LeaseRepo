@@ -10,7 +10,7 @@ import {
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const STORAGE_KEY = 'onix_api_key';
-const MAX_PAGES = 99;
+const MAX_PAGES = 50;
 
 const STATUS = { PENDING: 'pending', EXTRACTING: 'extracting', SAVED: 'saved', ERROR: 'error' };
 
@@ -94,7 +94,7 @@ function UploadLease({ onLeasesRefetch, onExtractionComplete }) {
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-sonnet-4-5-20250929',
           max_tokens: 4096,
           messages: [
             {
@@ -117,7 +117,9 @@ function UploadLease({ onLeasesRefetch, onExtractionComplete }) {
 
       if (!res.ok) {
         const errBody = await res.text();
+        console.error('EXTRACTION ERROR:', res.status, errBody);
         throw new Error(res.statusText + (errBody ? `: ${errBody.slice(0, 200)}` : ''));
+  
       }
 
       const data = await res.json();

@@ -7,11 +7,11 @@ export async function pdfToBase64Max99Pages(file) {
   const { PDFDocument } = await import('pdf-lib');
   const src = await PDFDocument.load(arrayBuffer);
   const pageCount = src.getPageCount();
-  if (pageCount <= 99) {
+  if (pageCount <= 50) {
     return arrayBufferToBase64(arrayBuffer);
   }
   const dest = await PDFDocument.create();
-  const copyIndices = Array.from({ length: 99 }, (_, i) => i);
+  const copyIndices = Array.from({ length: 50 }, (_, i) => i);
   const copied = await dest.copyPages(src, copyIndices);
   copied.forEach((p) => dest.addPage(p));
   const pdfBytes = await dest.save();
