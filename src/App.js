@@ -135,7 +135,7 @@ function App() {
       );
     }
     if (activeView === 'review-queue') {
-      return <ReviewQueue />;
+      return <ReviewQueue onLeaseApproved={refetchLeases} />;
     }
     if (activeView === 'leases' && selectedLease) {
       return <LeaseDetail lease={selectedLease} onAssetChange={handleAssetChange} onLeaseUpdate={handleLeaseUpdate} onLeaseDelete={handleLeaseDelete} />;

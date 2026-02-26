@@ -2,6 +2,14 @@
   padding: 0;
 }
 
+.lr-review-queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 .lr-review-queue-title {
   font-size: 18px;
   font-weight: 600;
@@ -12,7 +20,32 @@
 .lr-review-queue-subtitle {
   font-size: 13px;
   color: #6f6a63;
-  margin: 0 0 16px 0;
+  margin: 0;
+}
+
+.lr-review-queue-approve-all-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: #34c759;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.lr-review-queue-approve-all-btn:hover:not(:disabled) { background: #2da84e; }
+.lr-review-queue-approve-all-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.lr-review-queue-error-bar {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #c0392b;
+  background: #fdeaea;
+  border: 1px solid #e8c4c4;
+  border-radius: 3px;
+  margin-bottom: 12px;
 }
 
 .lr-review-queue-empty {
@@ -25,14 +58,10 @@
   color: #858078;
 }
 
-.lr-review-queue-empty p {
-  margin: 0;
-}
+.lr-review-queue-empty p { margin: 0; }
+.lr-review-queue-error p { color: #c0392b; }
 
-.lr-review-queue-error p {
-  color: #c0392b;
-}
-
+/* ── List ────────────────────────────────────────────────────── */
 .lr-review-queue-list {
   list-style: none;
   margin: 0;
@@ -43,21 +72,140 @@
 }
 
 .lr-review-queue-item {
+  border-bottom: 1px solid #e8e4df;
+}
+
+.lr-review-queue-item:last-child { border-bottom: 0; }
+
+.lr-review-queue-item--expanded {
+  background: #fafaf8;
+}
+
+/* ── Item row ────────────────────────────────────────────────── */
+.lr-review-queue-item-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  border-bottom: 1px solid #e8e4df;
-  font-size: 13px;
+  cursor: pointer;
+  gap: 12px;
 }
 
-.lr-review-queue-item:last-child {
-  border-bottom: 0;
+.lr-review-queue-item-row:hover { background: #f4f2ee; }
+
+.lr-review-queue-item-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .lr-review-queue-item-name {
   color: #24211d;
   font-weight: 500;
+  font-size: 13px;
+  display: block;
+}
+
+.lr-review-queue-item-detail {
+  font-size: 12px;
+  color: #6f6a63;
+  display: block;
+  margin-top: 2px;
+}
+
+.lr-review-queue-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lr-review-queue-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.lr-review-queue-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.lr-review-queue-btn--approve {
+  background: #34c759;
+  color: #fff;
+  border-color: #34c759;
+}
+
+.lr-review-queue-btn--approve:hover:not(:disabled) { background: #2da84e; }
+
+.lr-review-queue-btn--reject {
+  background: #fff;
+  color: #c0392b;
+  border-color: #c0392b;
+}
+
+.lr-review-queue-btn--reject:hover:not(:disabled) { background: #fdeaea; }
+
+.lr-review-queue-item-chevron {
+  font-size: 10px;
+  color: #a09a93;
+  margin-left: 4px;
+}
+
+/* ── Detail panel ────────────────────────────────────────────── */
+.lr-review-queue-item-detail-panel {
+  padding: 12px 16px 16px;
+  border-top: 1px solid #e8e4df;
+}
+
+.lr-review-queue-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px 16px;
+}
+
+.lr-review-queue-edit-grid label,
+.lr-review-queue-edit-row-full label {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6f6a63;
+  gap: 3px;
+}
+
+.lr-review-queue-edit-grid input,
+.lr-review-queue-edit-grid textarea,
+.lr-review-queue-edit-row-full input,
+.lr-review-queue-edit-row-full textarea {
+  font-size: 13px;
+  padding: 5px 8px;
+  border: 1px solid #d0ccc6;
+  border-radius: 3px;
+  background: #fff;
+  font-family: inherit;
+}
+
+.lr-review-queue-edit-grid input:focus,
+.lr-review-queue-edit-row-full input:focus,
+.lr-review-queue-edit-row-full textarea:focus {
+  outline: none;
+  border-color: #0064d2;
+}
+
+.lr-review-queue-edit-row-full {
+  margin-top: 10px;
+}
+
+.lr-review-queue-edit-row-full textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.lr-review-queue-confidence {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #6f6a63;
 }
 
 .lr-review-queue-item-date {

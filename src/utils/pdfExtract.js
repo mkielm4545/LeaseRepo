@@ -97,7 +97,7 @@ function toLeaseRowWithRent(extracted, rent_per_sqm) {
     non_compete: extracted.non_compete ?? '',
     category: extracted.category ?? '',
     doc_type: extracted.doc_type ?? '',
-    status: extracted.status ?? 'active',
+    status: extracted.status ?? 'pending',
     notes: extracted.notes ?? '',
     confidence: extracted.confidence ?? null,
   };
