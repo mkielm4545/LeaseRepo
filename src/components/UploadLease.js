@@ -148,6 +148,14 @@ function UploadLease({ onLeasesRefetch, onExtractionComplete }) {
     const insertedIds = [];
 
     for (let i = 0; i < fileEntries.length; i++) {
+      // Wait 30s between files to respect API rate limits
+      if (i > 0) {
+        for (let s = 30; s > 0; s--) {
+          setExtractError(`Waiting ${s}s before next file…`);
+          await new Promise((r) => setTimeout(r, 1000));
+        }
+        setExtractError(null);
+      }
       setEntryStatus(i, STATUS.EXTRACTING);
       try {
         const id = await extractOne(fileEntries[i], i);
@@ -157,7 +165,6 @@ function UploadLease({ onLeasesRefetch, onExtractionComplete }) {
         setEntryStatus(i, STATUS.ERROR, { errorMessage: err.message || 'Extraction failed' });
       }
     }
-
     const updated = await onLeasesRefetch?.() ?? [];
     if (insertedIds.length > 0 && onExtractionComplete) {
       onExtractionComplete(insertedIds, updated);
