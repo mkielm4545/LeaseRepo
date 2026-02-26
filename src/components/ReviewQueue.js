@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './ReviewQueue.css';
 import { supabase, normalizeLease } from '../supabase';
-import { formatDate, formatRentPerSqm, formatCurrency } from '../utils/format';
 
 function ReviewQueue({ onLeaseApproved }) {
   const [items, setItems] = useState([]);

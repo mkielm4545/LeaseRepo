@@ -603,7 +603,7 @@ function PassingRentEntryForm({ lease, glaNum, onCancel, onSaved, onError, savin
       invoiceUrl = urlData?.publicUrl ?? null;
     }
     const totalVal = rps * glaNum;
-    const { data: inserted, error: insertError } = await supabase
+    const { error: insertError } = await supabase
       .from('rent_history')
       .insert({
         lease_id: lease.id,
